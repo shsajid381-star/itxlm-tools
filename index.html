@@ -1,9 +1,324 @@
 <!DOCTYPE html>
-<html>
-<head><title>ITXLM Tools</title></head>
-<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
-<h1>ITXLM Tools Website Ready!</h1>
-<p>My first project is working.</p>
-<p>Congrats Sajjad Bhai!</p>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ITXLM Tools - Dashboard</title>
+  
+  <style>
+    /* Security guard: page content unauthenticated users ko display na ho */
+    html {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    html.authorized {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+
+  <!-- Security Check Script -->
+  <script src="auth.js"></script>
+  <script>
+    // Immediate Security Verification
+    if (!isAuthenticated()) {
+      window.location.replace("login.html");
+    } else {
+      // Verified: Show content
+      document.documentElement.classList.add("authorized");
+    }
+  </script>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-main);
+    }
+
+    .nav-logo-badge {
+      background: var(--primary);
+      color: white;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .nav-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: var(--danger);
+      color: #ffffff;
+      border-color: var(--danger);
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Main Container */
+    .main-content {
+      flex: 1;
+      max-width: 960px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(49, 46, 129, 0.2);
+      margin-bottom: 32px;
+    }
+
+    .hero-banner h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-banner p {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 6px;
+    }
+
+    .congrats-tag {
+      display: inline-block;
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Status Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+    }
+
+    .card-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card .badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-primary {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo-badge">IT</div>
+      <span>ITXLM Tools</span>
+    </div>
+
+    <div class="nav-user-actions">
+      <div class="user-info-badge">
+        <span class="status-dot"></span>
+        <span id="displayUser">admin@itxlm.com</span>
+      </div>
+      <button class="btn-logout" onclick="performLogout()" title="Sign Out of Dashboard">
+        <span>Logout</span> 🚪
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="hero-banner">
+      <h1>ITXLM Tools Website Ready!</h1>
+      <p>My first project is working.</p>
+      <div class="congrats-tag">✨ Congrats Sajjad Bhai! ✨</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>Security Guard Active</h3>
+        <p>Security authentication layer is successfully guarding index.html against unauthorized access.</p>
+        <span class="badge badge-success">Protected & Secure</span>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">👤</div>
+        <h3>Admin Access</h3>
+        <p>Logged in as Administrator with full access to ITXLM Tools features and dashboard.</p>
+        <span class="badge badge-primary">Role: Admin</span>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>GitHub Connected</h3>
+        <p>Repository synchronized with <code>shsajid381-star/itxlm-tools</code> on branch <code>main</code>.</p>
+        <span class="badge badge-success">Live & Synchronized</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 ITXLM Tools. All rights reserved. Secured Admin Portal.
+  </footer>
+
+  <script>
+    // Display user profile info
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.email) {
+      document.getElementById("displayUser").textContent = currentUser.email;
+    }
+  </script>
 </body>
 </html>
